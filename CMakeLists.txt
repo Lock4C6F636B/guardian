@@ -11,7 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(guardian
   main.cpp
-  image.cpp image.h stb_image.h stb_image_write.h
+  image.cpp image.h
+  miniz/miniz.c miniz/miniz.h miniz/miniz_common.h miniz/miniz_tdef.c miniz/miniz_tdef.h miniz/miniz_tinfl.c miniz/miniz_tinfl.h miniz/miniz_zip.c miniz/miniz_zip.h
 )
 
 include(GNUInstallDirs)
