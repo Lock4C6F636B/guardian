@@ -1,8 +1,12 @@
 #pragma once
+#include <fstream>
 #include <iostream>
-#include <cstdint>
-#include "stb_image.h"
+#include <crc.hpp>
 #include <vector>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 enum Extension{ //enum to figure the type
 	png,
@@ -16,8 +20,8 @@ class Image { //class for Image
 private:
     uint8_t* data;//positive int in range 0 to 8bits, basically pointer to start of data array
 	size_t size = 0; //size of data (array)
-	int height, width;
-	int channels;
+    uint32_t height, width;
+    uint8_t channels, filter;
 
 public:
 //--------------------------------------------------------------------------------------------------------------
@@ -40,8 +44,11 @@ public:
 
 
 //--------------------------------------------------------------------------------------------------------------
-	bool read(const char* filename); //load into the Image
-	bool write(const char* filename); //write from the Image
+    bool read_chunks(const std::string& filename);
 
-	Extension getExtension(const char* filename); //to determine extension
+    bool IHDR_chunk(std::ifstream &file);
+
+
+    uint32_t crc32(const unsigned char* data, size_t length);
+    uint32_t calculate_png_crc(const char* chunk_type, const unsigned char* chunk_data, size_t data_length);
 };

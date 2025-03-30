@@ -1,0 +1,63 @@
+PNG signature : file starts with an 8-byte signature: 89 50 4E 47 0D 0A 1A 0A (in hex)
+rest of file are chunks in order, Required Chunks:
+IHDR: Image header (dimensions, bit depth, color type)
+IDAT: Contains the actual image data (compressed)
+IEND: Marks the end of the PNG file
+
+
+
+Length (4 bytes): Size of the data field
+Type (4 bytes): A 4-letter code (like "IHDR", "IDAT")
+Data (variable): The actual chunk data
+CRC (4 bytes): A checksum for error detection
+
+
+
+IHDR struct:
+Length: 00 00 00 0D (13 bytes of data)
+Type:   49 48 44 52 ("IHDR")
+Data:   Width (4 bytes)
+        Height (4 bytes)
+        Bit depth (1 byte)
+        Color type (1 byte)
+        Compression method (1 byte)
+        Filter method (1 byte)
+        Interlace method (1 byte)
+CRC:    [4 bytes]
+
+
+
+IDAT struct:
+Length: [4 bytes] (variable)
+Type:   49 44 41 54 ("IDAT")
+Data:   [compressed image data]
+CRC:    [4 bytes]
+
+
+
+IEND struct:
+Length: 00 00 00 00 (0 bytes)
+Type:   49 45 4E 44 ("IEND")
+Data:   (none)
+CRC:    AE 42 60 82
+
+
+
+
+during compression:
+1.Filter
+2.LZ77 to find repeating pixels (comparing entire pixels all 4 channels... not comparing individual channels)
+3.Huffman code on top of L77 (not individual channels)
+4.Chunks
+
+LZ77 replaces values of repeating pixels
+Huffman code then replaces entire pixel map (including what was previously replaced with LZ77 code), thus making it more compact
+
+
+
+
+decompression:
+1. Chunks
+2- generate Huffman code tree and decipher individual Huffman codes
+3. read LZ77 values and copy corresponding pixels on the spot
+4. Filter
